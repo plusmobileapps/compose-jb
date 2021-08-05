@@ -17,6 +17,9 @@ struct MainView: View {
         
         return NavigationView {
             VStack {
+                NavigationLink(destination: Text("View2").navigationBarTitle("Title View2", displayMode: .inline)) {
+                      Text("NavigationLink") // how would the new component get to here possibly?
+                  }
                 ListView(
                     items: model.items,
                     onItemClicked: component.onItemClicked,
