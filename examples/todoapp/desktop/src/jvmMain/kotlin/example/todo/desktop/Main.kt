@@ -14,6 +14,8 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleC
 import com.arkivanov.decompose.extensions.compose.jetbrains.rememberRootComponent
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
+import com.arkivanov.mvikotlin.timetravel.server.TimeTravelServer
+import com.arkivanov.mvikotlin.timetravel.store.TimeTravelStoreFactory
 import com.badoo.reaktive.coroutinesinterop.asScheduler
 import com.badoo.reaktive.scheduler.overrideSchedulers
 import example.todo.common.database.DefaultTodoSharedDatabase
@@ -27,8 +29,9 @@ fun main() {
     overrideSchedulers(main = Dispatchers.Main::asScheduler)
 
     val lifecycle = LifecycleRegistry()
+    val timeTravelServer = TimeTravelServer(runOnMainThread = {})
+    timeTravelServer.start()
     val root = todoRoot(DefaultComponentContext(lifecycle = lifecycle))
-
     application {
         val windowState = rememberWindowState()
         LifecycleController(lifecycle, windowState)
@@ -52,6 +55,6 @@ fun main() {
 private fun todoRoot(componentContext: ComponentContext): TodoRoot =
     TodoRootComponent(
         componentContext = componentContext,
-        storeFactory = DefaultStoreFactory(),
+        storeFactory = TimeTravelStoreFactory(DefaultStoreFactory()),
         database = DefaultTodoSharedDatabase(TodoDatabaseDriver())
     )
