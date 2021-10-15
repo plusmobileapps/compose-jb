@@ -11,7 +11,6 @@ import androidx.compose.ui.window.rememberWindowState
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.decompose.extensions.compose.jetbrains.lifecycle.LifecycleController
-import com.arkivanov.decompose.extensions.compose.jetbrains.rememberRootComponent
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import com.arkivanov.mvikotlin.timetravel.server.TimeTravelServer
@@ -24,12 +23,15 @@ import example.todo.common.root.TodoRoot
 import example.todo.common.root.integration.TodoRootComponent
 import example.todo.common.ui.TodoRootContent
 import kotlinx.coroutines.Dispatchers
+import javax.swing.SwingUtilities
 
 fun main() {
     overrideSchedulers(main = Dispatchers.Main::asScheduler)
 
     val lifecycle = LifecycleRegistry()
-    val timeTravelServer = TimeTravelServer(runOnMainThread = {})
+    val timeTravelServer = TimeTravelServer(runOnMainThread = {
+        SwingUtilities.invokeLater(it)
+    })
     timeTravelServer.start()
     val root = todoRoot(DefaultComponentContext(lifecycle = lifecycle))
     application {
